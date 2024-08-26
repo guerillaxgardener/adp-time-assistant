@@ -9,7 +9,7 @@ const MessageComponent: React.FC<MessageComponentProps> = ({ remainingTime }) =>
     if (remainingTime.hours === 0 && remainingTime.minutes === 0) {
       return <p className="text-xl text-green-600">YOOOO lets GOOOO! Enjoy ur weekend, u HOTTIE BADDIE SUPREME being</p>;
     } else if (remainingTime.hours < 5) {
-      return <p className="text-xl text-yellow-600">Good job playa, you getting close!!!!</p>;
+      return <p className="text-xl text-yellow-600">heheheeeee Good job playa, you getting close!!!!</p>;
     }
     return null;
   };
