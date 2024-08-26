@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 const App: React.FC = () => {
-  const [hours, setHours] = useState<{ Mon: number; Tues: number; Wed: number; Thur: number; Fri: number }>(() => {
-    // Retrieve initial values from local storage or set to 0
+  const [hours, setHours] = useState<{ Mon: string; Tues: string; Wed: string; Thur: string; Fri: string }>(() => {
+    // Retrieve initial values from local storage or set to empty strings
     const savedHours = localStorage.getItem('hours');
-    return savedHours ? JSON.parse(savedHours) : { Mon: 0, Tues: 0, Wed: 0, Thur: 0, Fri: 0 };
+    return savedHours ? JSON.parse(savedHours) : { Mon: '', Tues: '', Wed: '', Thur: '', Fri: '' };
   });
 
   const [remainingTime, setRemainingTime] = useState({ hours: 40, minutes: 0 });
@@ -13,7 +13,8 @@ const App: React.FC = () => {
     // Save hours to local storage whenever they change
     localStorage.setItem('hours', JSON.stringify(hours));
 
-    const totalWorked = Object.values(hours).reduce((total, h) => total + h, 0);
+    const totalWorked = Object.values(hours)
+      .reduce((total, h) => total + (parseFloat(h) || 0), 0); // Convert each value to float or 0
     const totalMinutes = Math.floor(totalWorked * 60);
     const remainingMinutes = Math.max(2400 - totalMinutes, 0); // 2400 minutes = 40 hours
 
@@ -24,22 +25,23 @@ const App: React.FC = () => {
   }, [hours]);
 
   const handleInputChange = (day: keyof typeof hours, value: string) => {
-    const decimalValue = parseFloat(value);
-    if (!isNaN(decimalValue)) {
-      setHours((prev) => ({ ...prev, [day]: decimalValue }));
+    // Allow decimals even if there's no number after it
+    if (/^\d*\.?\d*$/.test(value)) {
+      setHours((prev) => ({ ...prev, [day]: value }));
     }
   };
 
   const handleReset = () => {
     localStorage.removeItem('hours');
-    setHours({ Mon: 0, Tues: 0, Wed: 0, Thur: 0, Fri: 0 });
+    setHours({ Mon: '', Tues: '', Wed: '', Thur: '', Fri: '' });
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100">
       <header className="w-full p-4 bg-blue-500 text-white">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">K's ADP Improver</h1>          <button
+          <h1 className="text-xl font-bold">ADP-Mimic</h1>
+          <button
             onClick={handleReset}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
@@ -57,8 +59,9 @@ const App: React.FC = () => {
               <div key={day} className="flex items-center">
                 <label className="w-16 text-gray-700">{day}:</label>
                 <input
-                  type="number"
-                  step="0.1"
+                  type="text"
+                  inputMode="decimal"
+                  pattern="[0-9]*[.,]?[0-9]+" // Allows numbers with optional decimal
                   value={hours[day]}
                   onChange={(e) => handleInputChange(day, e.target.value)}
                   onFocus={(e) => e.target.select()} // Highlights all value on click
