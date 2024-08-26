@@ -49,6 +49,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
           &times;
         </button>
         {children}
+        <div className="text-center mt-6">
+          <button
+            onClick={onClose}
+            className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+            aria-label="Close Modal"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>,
     document.body

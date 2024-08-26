@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import MessageComponent from './components/MessageComponent';
 import Modal from './components/Modal';
 import Footer from './components/Footer';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 const App: React.FC = () => {
   const [hours, setHours] = useState<{ Mon: string; Tues: string; Wed: string; Thur: string; Fri: string }>(() => {
@@ -122,11 +124,11 @@ const App: React.FC = () => {
           {/* Second Modal */}
           <Modal isOpen={modalsOpen.modal2} onClose={() => closeModal('modal2')}>
   <div>
-    <h2 className="text-2xl font-bold mb-4">The Principality of Sealand</h2>
+    <h2 className="text-2xl font-bold mb-4 space-y-2">The Principality of Sealand</h2>
     <p className="mb-4">
       The Principality of Sealand is a self-proclaimed micronation located on a former World War II sea fort, known as HM Fort Roughs, in the North Sea. Just off the coast of Suffolk, England, Sealand was established by the Bates family in 1967. Although it is not officially recognized by any government, Sealand operates with its own flag, currency, and even passports. Here are some fascinating facts and events in the history of this unique micronation.
     </p>
-    <ul className="list-disc list-inside">
+    <ul className="list-disc list-inside space-y-2">
       <li>Sealand was founded on September 2, 1967, by Paddy Roy Bates, a former British Army Major who declared the fort an independent sovereign state.</li>
       <li>In 1968, a British workman entered Sealand’s territory, prompting Roy Bates to fire warning shots. The British government later took the case to court, but the judge ruled that Sealand was outside British jurisdiction.</li>
       <li>Sealand has its own constitution, established in 1975, which includes a preamble and seven articles.</li>
