@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import MessageComponent from './components/MessageComponent'; // Import the new component
 
 const App: React.FC = () => {
   const [hours, setHours] = useState<{ Mon: string; Tues: string; Wed: string; Thur: string; Fri: string }>(() => {
-    // Retrieve initial values from local storage or set to empty strings
     const savedHours = localStorage.getItem('hours');
     return savedHours ? JSON.parse(savedHours) : { Mon: '', Tues: '', Wed: '', Thur: '', Fri: '' };
   });
@@ -10,13 +10,12 @@ const App: React.FC = () => {
   const [remainingTime, setRemainingTime] = useState({ hours: 40, minutes: 0 });
 
   useEffect(() => {
-    // Save hours to local storage whenever they change
     localStorage.setItem('hours', JSON.stringify(hours));
 
     const totalWorked = Object.values(hours)
-      .reduce((total, h) => total + (parseFloat(h) || 0), 0); // Convert each value to float or 0
+      .reduce((total, h) => total + (parseFloat(h) || 0), 0);
     const totalMinutes = Math.floor(totalWorked * 60);
-    const remainingMinutes = Math.max(2400 - totalMinutes, 0); // 2400 minutes = 40 hours
+    const remainingMinutes = Math.max(2400 - totalMinutes, 0);
 
     const remainingHours = Math.floor(remainingMinutes / 60);
     const remainingMins = remainingMinutes % 60;
@@ -25,7 +24,6 @@ const App: React.FC = () => {
   }, [hours]);
 
   const handleInputChange = (day: keyof typeof hours, value: string) => {
-    // Allow decimals even if there's no number after it
     if (/^\d*\.?\d*$/.test(value)) {
       setHours((prev) => ({ ...prev, [day]: value }));
     }
@@ -61,10 +59,10 @@ const App: React.FC = () => {
                 <input
                   type="text"
                   inputMode="decimal"
-                  pattern="[0-9]*[.,]?[0-9]+" // Allows numbers with optional decimal
+                  pattern="[0-9]*[.,]?[0-9]+" 
                   value={hours[day]}
                   onChange={(e) => handleInputChange(day, e.target.value)}
-                  onFocus={(e) => e.target.select()} // Highlights all value on click
+                  onFocus={(e) => e.target.select()}
                   className="w-full p-2 border rounded text-gray-700"
                   placeholder="Enter hours"
                 />
@@ -75,6 +73,7 @@ const App: React.FC = () => {
             <p className="text-xl text-gray-700">
               Hours Remaining: {remainingTime.hours} hrs {remainingTime.minutes} mins
             </p>
+            <MessageComponent remainingTime={remainingTime} />
           </div>
         </div>
       </main>
