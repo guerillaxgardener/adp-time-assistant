@@ -5,9 +5,10 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  className?: string; // Add an optional className prop
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, className }) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -38,7 +39,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
       role="dialog"
     >
       <div
-        className="relative bg-white w-full max-w-2xl lg:max-w-4xl p-6 rounded-lg shadow-lg overflow-auto max-h-[80vh] text-lg leading-relaxed"
+        className={`relative bg-white w-full max-w-2xl lg:max-w-4xl p-6 rounded-lg shadow-lg overflow-auto max-h-[80vh] text-lg leading-relaxed ${className}`}
         aria-labelledby="modal-title"
       >
         <button

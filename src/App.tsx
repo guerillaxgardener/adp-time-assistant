@@ -12,6 +12,8 @@ import {
   calculateRemainingTime,
   calculateDailyTime,
 } from "./timeUtils";
+import koalaImage from './assets/img.jpg';
+
 
 const App: React.FC = () => {
   const [hours, setHours] = useState<{
@@ -26,6 +28,8 @@ const App: React.FC = () => {
       ? JSON.parse(savedHours)
       : { Mon: "", Tues: "", Wed: "", Thur: "", Fri: "" };
   });
+
+  const [helpModalOpen, setHelpModalOpen] = useState(false); // State for the HELP modal
 
   const [lastClockIn, setLastClockIn] = useState<{
     Mon: string;
@@ -107,8 +111,7 @@ const App: React.FC = () => {
     setLastClockIn({ Mon: "", Tues: "", Wed: "", Thur: "", Fri: "" });
     setAdditionalMinutes({ Mon: 0, Tues: 0, Wed: 0, Thur: 0, Fri: 0 });
   };
-  
-  
+
   const handleClockInChange = useCallback(
     (day: keyof typeof lastClockIn, value: string | null) => {
       if (value) {
@@ -133,18 +136,6 @@ const App: React.FC = () => {
     },
     []
   );
-
-  useEffect(() => {
-    localStorage.setItem("hours", JSON.stringify(hours));
-
-    const totalWorkedMinutes = calculateTotalWorkedMinutes(
-      hours,
-      additionalMinutes
-    );
-    const newRemainingTime = calculateRemainingTime(totalWorkedMinutes);
-
-    setRemainingTime(newRemainingTime);
-  }, [hours, additionalMinutes, handleClockInChange]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -184,11 +175,21 @@ const App: React.FC = () => {
     }
   };
 
+  const handleHelpClick = () => {
+    setHelpModalOpen(true); // Open the help modal
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100">
       <header className="w-full p-4 bg-blue-500 text-white">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <h1 className="text-xl font-bold">ADP-Mimic</h1>
+          <button
+            onClick={handleHelpClick}
+            className="px-4 py-2 mr-3 ml-auto bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            HELP!
+          </button>
           <button
             onClick={handleReset}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
@@ -309,6 +310,15 @@ const App: React.FC = () => {
         openModal1={() => openModal("modal1")}
         openModal2={() => openModal("modal2")}
       />
+
+      {/* Help Modal */}
+      <Modal isOpen={helpModalOpen} onClose={() => setHelpModalOpen(false)} className="p-0">
+        <img
+          src={koalaImage} // Replace this with the path to your image
+          alt="This is a lil koala"
+          className="w-full h-full object-cover"
+        />
+      </Modal>
     </div>
   );
 };
