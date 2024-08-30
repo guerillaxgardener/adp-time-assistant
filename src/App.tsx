@@ -131,7 +131,7 @@ const App: React.FC = () => {
         setAdditionalMinutes((prev) => ({ ...prev, [day]: minutesWorked }));
       }
     },
-    [lastClockIn]
+    []
   );
 
   useEffect(() => {
