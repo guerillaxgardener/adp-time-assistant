@@ -11,7 +11,7 @@ import {
   calculateTotalWorkedMinutes,
   calculateRemainingTime,
   calculateDailyTime,
-} from "./timeUtils";
+} from "./utils/timeUtils";
 import koalaImage from './assets/img.jpg';
 
 
@@ -29,7 +29,7 @@ const App: React.FC = () => {
       : { Mon: "", Tues: "", Wed: "", Thur: "", Fri: "" };
   });
 
-  const [helpModalOpen, setHelpModalOpen] = useState(false); // State for the HELP modal
+  const [helpModalOpen, setHelpModalOpen] = useState(false); 
 
   const [lastClockIn, setLastClockIn] = useState<{
     Mon: string;
@@ -314,7 +314,7 @@ const App: React.FC = () => {
       {/* Help Modal */}
       <Modal isOpen={helpModalOpen} onClose={() => setHelpModalOpen(false)} className="p-0">
         <img
-          src={koalaImage} // Replace this with the path to your image
+          src={koalaImage}
           alt="This is a lil koala"
           className="w-full h-full object-cover"
         />
