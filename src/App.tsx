@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MessageComponent from "./components/MessageComponent";
 import Modal from "./components/Modal";
 import Footer from "./components/Footer";
@@ -86,7 +86,10 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem("hours", JSON.stringify(hours));
 
-    const totalWorkedMinutes = calculateTotalWorkedMinutes(hours, additionalMinutes);
+    const totalWorkedMinutes = calculateTotalWorkedMinutes(
+      hours,
+      additionalMinutes
+    );
     const newRemainingTime = calculateRemainingTime(totalWorkedMinutes);
 
     setRemainingTime(newRemainingTime);
@@ -104,43 +107,60 @@ const App: React.FC = () => {
     setLastClockIn({ Mon: "", Tues: "", Wed: "", Thur: "", Fri: "" });
     setAdditionalMinutes({ Mon: 0, Tues: 0, Wed: 0, Thur: 0, Fri: 0 });
   };
+  
+  
+  const handleClockInChange = useCallback(
+    (day: keyof typeof lastClockIn, value: string | null) => {
+      if (value) {
+        setLastClockIn((prev) => ({ ...prev, [day]: value }));
 
-  const handleClockInChange = (
-    day: keyof typeof lastClockIn,
-    value: string | null
-  ) => {
-    if (value) {
-      setLastClockIn((prev) => ({ ...prev, [day]: value }));
+        const now = new Date();
+        const [hour, minute] = value.split(":").map(Number);
+        const clockInTime = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          hour,
+          minute
+        );
 
-      const now = new Date();
-      const [hour, minute] = value.split(":").map(Number);
-      const clockInTime = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        hour,
-        minute
-      );
+        const minutesWorked = Math.max(
+          0,
+          Math.ceil((now.getTime() - clockInTime.getTime()) / 60000)
+        );
+        setAdditionalMinutes((prev) => ({ ...prev, [day]: minutesWorked }));
+      }
+    },
+    [lastClockIn]
+  );
 
-      const minutesWorked = Math.max(
-        0,
-        Math.ceil((now.getTime() - clockInTime.getTime()) / 60000)
-      );
-      setAdditionalMinutes((prev) => ({ ...prev, [day]: minutesWorked }));
-    }
-  };
+  useEffect(() => {
+    localStorage.setItem("hours", JSON.stringify(hours));
+
+    const totalWorkedMinutes = calculateTotalWorkedMinutes(
+      hours,
+      additionalMinutes
+    );
+    const newRemainingTime = calculateRemainingTime(totalWorkedMinutes);
+
+    setRemainingTime(newRemainingTime);
+  }, [hours, additionalMinutes, handleClockInChange]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       Object.keys(lastClockIn).forEach((day) => {
         if (lastClockIn[day as keyof typeof lastClockIn]) {
-          handleClockInChange(day as keyof typeof lastClockIn, lastClockIn[day as keyof typeof lastClockIn]);
+          handleClockInChange(
+            day as keyof typeof lastClockIn,
+            lastClockIn[day as keyof typeof lastClockIn]
+          );
         }
       });
     }, 60000); // Update every minute
 
+
     return () => clearInterval(intervalId); // Cleanup on unmount
-  }, [lastClockIn]);
+  }, [lastClockIn, handleClockInChange]);
 
   const handleBatchHours = (day: keyof typeof hours) => {
     const totalMinutes =
